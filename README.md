@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# [react] weather web
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Api를 이용해 날씨웹 만들기
 
 ## Available Scripts
 
