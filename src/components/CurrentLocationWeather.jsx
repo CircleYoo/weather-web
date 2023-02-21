@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import '../App';
+import "../App";
 
 export default function CurrentLocationWeather() {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [weather, setWeather] = useState(null);
-  const API_KEY = '85949a76c886a99b91355b504b7e952e';
-  
-    console.log(weather)
+  const API_KEY = "85949a76c886a99b91355b504b7e952e";
+
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
+      navigator.geolocation.getCurrentPosition(function (position) {
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
@@ -24,9 +23,7 @@ export default function CurrentLocationWeather() {
   useEffect(() => {
     if (location.latitude && location.longitude) {
       axios
-        .get(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&units=metric&appid=${API_KEY}`
-        )
+        .get(`https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&units=metric&appid=${API_KEY}`)
         .then((response) => {
           setWeather(response.data);
         })
@@ -40,7 +37,9 @@ export default function CurrentLocationWeather() {
     <div>
       {weather ? (
         <div>
-          <h1>{weather.name}, {weather.sys.country}</h1>
+          <h1>
+            {weather.name}, {weather.sys.country}
+          </h1>
           <p>Temperature: {weather.main.temp}°C</p>
           <p>Feel like: {weather.main.feels_like}°C</p>
           <p>Humidity: {weather.main.humidity}%</p>

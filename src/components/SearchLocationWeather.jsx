@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { BiSearch } from 'react-icons/bi';
 import '../App'
 
 export default function SearchLocationWeather() {
@@ -21,13 +22,14 @@ export default function SearchLocationWeather() {
           Enter city name:
           <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
         </label>
-        <button type="submit">Get weather</button>
+        <button type="submit"><BiSearch /></button>
       </form>
       {weatherData && (
         <div>
           <p>Current temperature: {weatherData.main.temp}°C</p>
           <p>Feels like: {weatherData.main.feels_like}°C</p>
           <p>Humidity: {weatherData.main.humidity}%</p>
+          <p>Wind Speed: {weatherData.wind.speed} km/h</p>
         </div>
       )}
     </div>

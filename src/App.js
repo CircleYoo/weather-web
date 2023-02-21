@@ -5,8 +5,8 @@ import SearchLocationWeather from './components/SearchLocationWeather';
 function App() {
   return (
     <div>
-      <SearchLocationWeather/>
-      <CurrentLocationWeather/>
+      <SearchLocationWeather />
+      <CurrentLocationWeather />
     </div>
   );
 }
