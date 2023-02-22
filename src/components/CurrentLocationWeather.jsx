@@ -31,21 +31,21 @@ export default function CurrentLocationWeather() {
   useEffect(() => {
     if (location.latitude && location.longitude) {
       axios
-        .get(`https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&units=metric&appid=${API_KEY}`)
+        .get(`https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&units=metric&appid=${API_KEY}&lang=kr`)
         .then((response) => {
           setWeather(response.data);
         })
         .catch((error) => {
           console.log(error);
         });
-    }
-  }, [location]);
-
+      }
+    }, [location]);
+    
   // 5 days / 3 hours 가져오기
   useEffect(() => {
     if (location.latitude && location.longitude) {
       axios
-        .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${location.latitude}&lon=${location.longitude}&units=metric&appid=${API_KEY}`)
+        .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${location.latitude}&lon=${location.longitude}&units=metric&appid=${API_KEY}&lang=kr`)
         .then((response) => {
           const forecastList = response.data.list;
           const dailyData = forecastList.filter(item => item.dt_txt.includes("12:00:00"));
@@ -60,18 +60,16 @@ export default function CurrentLocationWeather() {
     }
   }, [location]);
   
-  console.log(forecast)
+
 
   // 5 days / 3 hours 필요한 부분 출력하기
   const renderForecastData = () => {
-    
     if(forecast) {
       return forecast.map((data, idx) => {
         return (
           <div key = {idx}>
-            {/* <h2>{moment(data.dt_txt).format('dddd')}</h2> */}
             <h2>{moment(data.dt_txt).calendar().substring(0, 3)}</h2>
-            <p>Temperature: {data.main.temp}°C</p>
+            <p>Temperature: {Math.round(data.main.temp)}°C</p>
             <p>Weather: {data.weather[0].description}</p>
           </div>
         )
@@ -80,6 +78,7 @@ export default function CurrentLocationWeather() {
       return <p>Loading...</p>;
     }
   }
+
   return (
     <div>
       {weather ? (
@@ -87,10 +86,13 @@ export default function CurrentLocationWeather() {
           <h1>
             {weather.name}, {weather.sys.country}
           </h1>
-          <p>Temperature: {weather.main.temp}°C</p>
-          <p>Feel like: {weather.main.feels_like}°C</p>
+          <p>Weather: {weather.weather[0].description}</p>
+          <p>온도: {Math.round(weather.main.temp)}°C</p>
+          <p>일출: {moment.unix(weather.sys.sunrise).format('LT')}</p>
+          <p>일몰: {moment.unix(weather.sys.sunset).format('LT')}</p>
+          <p>Real Feel: {Math.round(weather.main.feels_like)}°C</p>
           <p>Humidity: {weather.main.humidity}%</p>
-          <p>Wind Speed: {weather.wind.speed} km/h</p>
+          <p>Wind: {weather.wind.speed} km/h</p>
           <div>
             <p>오후 1시 기준</p>
             {renderForecastData()}
