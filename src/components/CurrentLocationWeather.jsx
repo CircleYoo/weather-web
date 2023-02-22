@@ -5,7 +5,7 @@ import "../App";
 export default function CurrentLocationWeather() {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [weather, setWeather] = useState(null);
-  const [forecast, setForecast] = useState(null);
+  const [forecast, setForecast] = useState([]);
   const API_KEY = "85949a76c886a99b91355b504b7e952e";
 
   useEffect(() => {
@@ -46,9 +46,23 @@ export default function CurrentLocationWeather() {
         });
     }
   }, [location]);
-
-  console.log(forecast.list.filter(reading => reading.dt_txt.includes("18:00:00")))
-
+  
+  console.log(forecast)
+  const renderForecastData = () => {
+    if(forecast && forecast.list) {
+      return forecast.list.map((data, idx) => {
+        return (
+          <div key = {idx}>
+            <h2>{data.dt_txt}</h2>
+            <p>Temperature: {data.main.temp}</p>
+            <p>Weather: {data.weather[0].description}</p>
+          </div>
+        )
+      });
+    } else {
+      return <p>Loading...</p>;
+    }
+  }
   return (
     <div>
       {weather ? (
@@ -60,6 +74,7 @@ export default function CurrentLocationWeather() {
           <p>Feel like: {weather.main.feels_like}°C</p>
           <p>Humidity: {weather.main.humidity}%</p>
           <p>Wind Speed: {weather.wind.speed} km/h</p>
+          {renderForecastData()}
         </div>
       ) : (
         <p>Loading...</p>
