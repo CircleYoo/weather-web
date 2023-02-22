@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import moment from 'moment';
+import 'moment/locale/ko';
 import "../App";
+
+moment.locale('ko');
 
 export default function CurrentLocationWeather() {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState([]);
   const API_KEY = "85949a76c886a99b91355b504b7e952e";
+  
 
+  // 현지 위치 가져오기
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
@@ -21,6 +27,7 @@ export default function CurrentLocationWeather() {
     }
   }, []);
 
+  // 현재 위치의 날씨 가져오기
   useEffect(() => {
     if (location.latitude && location.longitude) {
       axios
@@ -34,12 +41,18 @@ export default function CurrentLocationWeather() {
     }
   }, [location]);
 
+  // 5 days / 3 hours 가져오기
   useEffect(() => {
     if (location.latitude && location.longitude) {
       axios
         .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${location.latitude}&lon=${location.longitude}&units=metric&appid=${API_KEY}`)
         .then((response) => {
-          setForecast(response.data);
+          const forecastList = response.data.list;
+          const dailyData = forecastList.filter(item => item.dt_txt.includes("12:00:00"));
+          // const formattedData = dailyData.map(item => ({
+          //   description: item.weather[0].description
+          // }));
+          setForecast(dailyData);
         })
         .catch((error) => {
           console.log(error);
@@ -48,13 +61,17 @@ export default function CurrentLocationWeather() {
   }, [location]);
   
   console.log(forecast)
+
+  // 5 days / 3 hours 필요한 부분 출력하기
   const renderForecastData = () => {
-    if(forecast && forecast.list) {
-      return forecast.list.map((data, idx) => {
+    
+    if(forecast) {
+      return forecast.map((data, idx) => {
         return (
           <div key = {idx}>
-            <h2>{data.dt_txt}</h2>
-            <p>Temperature: {data.main.temp}</p>
+            {/* <h2>{moment(data.dt_txt).format('dddd')}</h2> */}
+            <h2>{moment(data.dt_txt).calendar().substring(0, 3)}</h2>
+            <p>Temperature: {data.main.temp}°C</p>
             <p>Weather: {data.weather[0].description}</p>
           </div>
         )
@@ -74,7 +91,10 @@ export default function CurrentLocationWeather() {
           <p>Feel like: {weather.main.feels_like}°C</p>
           <p>Humidity: {weather.main.humidity}%</p>
           <p>Wind Speed: {weather.wind.speed} km/h</p>
-          {renderForecastData()}
+          <div>
+            <p>오후 1시 기준</p>
+            {renderForecastData()}
+          </div>
         </div>
       ) : (
         <p>Loading...</p>
